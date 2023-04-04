@@ -5,6 +5,9 @@
 #ifndef PROJ04SRC_BET_HPP
 #define PROJ04SRC_BET_HPP
 #include <queue>
+#include <iostream>
+#include <cstdlib>
+
 
 using namespace std;
 
@@ -226,6 +229,11 @@ bool BET<T>::empty()
     return (root == nullptr);
 }
 
+template<typename T>
+void BET<T>::makeEmpty()
+{
+    makeEmpty(root);
+}
 
 //############## Private Functions ###########################
 
@@ -235,13 +243,46 @@ bool BET<T>::empty()
  * You should not have unnecessary parentheses.
  */
 template <typename T>
-void BET<T>::printInfixExpression(BinaryNode *n){
+void BET<T>::printInfixExpression(BinaryNode *t){
+    /*
     if (n != nullptr) {
         printInfixExpression(n->left);
-        cout << n=n->element << " ";
+        cout << n=n->element << " "; //ISSUES WITH OPERATOR?? <<
         printInfixExpression(n->right);
+    }*/
+
+    if(t->left !=nullptr)
+    {
+        if(presedance(t,t->left))
+        {
+            cout<<"(";
+            printInfixExpression(t->left);
+            cout<<")";
+        }
+        else
+        {
+            printInfixExpression(t->left);
+        }
+    }
+
+    cout << t->element.getValue() << " ";
+
+
+    if(t->right !=nullptr)
+    {
+        if(presedance(t,t->right) || presedance2(t,t->right))
+        {
+            cout<<"(";
+            printInfixExpression(t->right);
+            cout<<")";
+        }
+        else
+        {
+            printInfixExpression(t->right);
+        }
     }
 }
+
 
 /*
  * delete all nodes in the subtree pointed to by t
@@ -252,10 +293,10 @@ void BET<T>::makeEmpty(BinaryNode* &t) {
         makeEmpty(t->left);
         makeEmpty(t->right);
         delete t;
-        t = nullptr;
     }
+    t = nullptr;
 }
-
+//ISSUES WITH MAKE EMPTY FUNCTION
 
 /*
  * clone all nodes in the subtree pointed to by t. Can be called by functions such as the assignment operator=.
@@ -274,13 +315,11 @@ typename BET<T>::BinaryNode * BET<T>::clone(BinaryNode *t) {
 template<typename T>
 void BET<T>::printPostfixExpression(BinaryNode *n)
 {
-    if (n == nullptr) {
-        return;
+    if (n != nullptr) {
+        printPostfixExpression(n->left);
+        printPostfixExpression(n->right);
+        cout << n->element.getValue() << " ";
     }
-
-    printPostfixExpression(n->left);
-    printPostfixExpression(n->right);
-    cout << n->data << " ";
 }
 
 /*
@@ -361,5 +400,34 @@ int BET<T>::breadth(BinaryNode* &t) {
 
     return breadth;
 }
+
+
+template <typename T>
+bool BET<T>::presedance(BinaryNode *t1, BinaryNode *t2)                                                             //Literaral just checking nodes are combo of any two operators
+{
+    if((t1->element.getValue() == "*" || t1->element.getValue() == "/") && (t2->element.getValue() == "+" || t2->element.getValue() == "-"))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+template <typename T>                                                                                               // Checking if they are certain combo of + and -
+bool BET<T>::presedance2(BinaryNode *t1, BinaryNode *t2)
+{
+    if(t1->element.getValue() == t2->element.getValue())
+        return true;
+    if(t1->element.getValue()=="+" && t2->element.getValue()=="-" )
+        return true;
+    if(t1->element.getValue()=="-" && t2->element.getValue()=="+" )
+        return true;
+
+    return false;
+
+}
+
 
 #endif //PROJ04SRC_BET_HPP
