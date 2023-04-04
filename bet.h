@@ -47,21 +47,14 @@ private:
                 : element{std::move(theElement)}, left{lt}, right{rt} {};
     };
 
-    //DONE
-    void printInfixExpression(BinaryNode *n); //print to the standard output the corresponding infix expression. Note that you may need to add parentheses depending on the precedence of operators. You should not have unnecessary parentheses.
 
+    void printInfixExpression(BinaryNode *n); //print to the standard output the corresponding infix expression. Note that you may need to add parentheses depending on the precedence of operators. You should not have unnecessary parentheses.
     void makeEmpty(BinaryNode* &t); //delete all nodes in the subtree pointed to by t
     BinaryNode * clone(BinaryNode *t); //clone all nodes in the subtree pointed to by t. Can be called by functions such as the assignment operator=.
     void printPostfixExpression(BinaryNode *n); //print to the standard output the corresponding postfix expression.
-
-    //DONE
     size_t size(BinaryNode *t); //return the number of nodes in the subtree pointed to by t.
-
-    //DONE
     int leaves (BinaryNode *t); //return the number of leaf nodes in the subtree pointed to by t.
-    //DONE
     int depth(BinaryNode* &t); //return the depth of the subtree pointed to by t.
-
     int breadth(BinaryNode* &t); //return the breadth of the subtree pointed to by t. Hint: this one requires a helper function for a recursive implementation. But you do not have to have a recursive implementation.
     BinaryNode* root;    // Private root node is used to determine the top of the tree. A tree is empty if root ==NULL.
 

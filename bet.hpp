@@ -8,6 +8,8 @@
 
 using namespace std;
 
+//############## Public Functions ###########################
+
 /*
  * default zero-parameter constructor.
  * Builds an empty tree.
@@ -224,6 +226,9 @@ bool BET<T>::empty()
     return (root == nullptr);
 }
 
+
+//############## Private Functions ###########################
+
 /*
  * print to the standard output the corresponding infix expression.
  * Note that you may need to add parentheses depending on the precedence of operators.
@@ -238,6 +243,49 @@ void BET<T>::printInfixExpression(BinaryNode *n){
     }
 }
 
+/*
+ * delete all nodes in the subtree pointed to by t
+ */
+template<typename T>
+void BET<T>::makeEmpty(BinaryNode* &t) {
+    if (t != nullptr) {
+        makeEmpty(t->left);
+        makeEmpty(t->right);
+        delete t;
+        t = nullptr;
+    }
+}
+
+
+/*
+ * clone all nodes in the subtree pointed to by t. Can be called by functions such as the assignment operator=.
+ */
+template<typename T>
+typename BET<T>::BinaryNode * BET<T>::clone(BinaryNode *t) {
+    if (t == nullptr) {
+        return nullptr;
+    }
+    return new BinaryNode(t->element, clone(t->left), clone(t->right));
+}
+
+/*
+ * print to the standard output the corresponding postfix expression.
+ */
+template<typename T>
+void BET<T>::printPostfixExpression(BinaryNode *n)
+{
+    if (n == nullptr) {
+        return;
+    }
+
+    printPostfixExpression(n->left);
+    printPostfixExpression(n->right);
+    cout << n->data << " ";
+}
+
+/*
+ *
+ */
 /*
  * return the number of nodes in the subtree pointed to by t.
  */
@@ -276,6 +324,42 @@ int BET<T>::depth(BinaryNode* &t){
     int rightDepth = depth(t->right);
 
     return 1 + std::max(leftDepth, rightDepth);
+}
+
+/*
+ * return the breadth of the subtree pointed to by t.
+ * Hint: this one requires a helper function for a recursive implementation.
+ * But you do not have to have a recursive implementation.
+ */
+template<typename T>
+int BET<T>::breadth(BinaryNode* &t) {
+    if (t == nullptr) {
+        return 0;
+    }
+
+    queue<BinaryNode*> q;
+    q.push(t);
+
+    int breadth = 0;
+
+    while (!q.empty()) {
+        breadth = max(breadth, (int)q.size());
+
+        for (int i = 0; i < q.size(); i++) {
+            BinaryNode* node = q.front();
+            q.pop();
+
+            if (node->left != nullptr) {
+                q.push(node->left);
+            }
+
+            if (node->right != nullptr) {
+                q.push(node->right);
+            }
+        }
+    }
+
+    return breadth;
 }
 
 #endif //PROJ04SRC_BET_HPP
