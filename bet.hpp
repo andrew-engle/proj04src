@@ -217,11 +217,11 @@ int BET<T>::breadth() {
         }
     }
 
-    return max_breadth;
-}
+    return max_breadth;}
 
 /*
- * return true if the tree is empty. Return false otherwise
+ * return true if the tree is empty.
+ * Return false otherwise
  */
 template<typename T>
 bool BET<T>::empty()
@@ -229,6 +229,11 @@ bool BET<T>::empty()
     return (root == nullptr);
 }
 
+/*
+ * free up the memory used by all the nodes in the binary expression tree.
+ * It can be used to clear the tree before building a new expression or
+ * when the tree is no longer needed to avoid memory leaks.
+ */
 template<typename T>
 void BET<T>::makeEmpty()
 {
@@ -244,45 +249,34 @@ void BET<T>::makeEmpty()
  */
 template <typename T>
 void BET<T>::printInfixExpression(BinaryNode *t){
-    /*
-    if (n != nullptr) {
-        printInfixExpression(n->left);
-        cout << n=n->element << " "; //ISSUES WITH OPERATOR?? <<
-        printInfixExpression(n->right);
-    }*/
-
-    if(t->left !=nullptr)
+    if(t->left !=nullptr) // if t has a left child
     {
-        if(presedance(t,t->left))
+        if(priority(t,t->left)) // if the left child has higher precedence than t
         {
-            cout<<"(";
-            printInfixExpression(t->left);
-            cout<<")";
+            cout<<"("; // print an opening parenthesis
+            printInfixExpression(t->left); // recursively print the left subtree in infix form
+            cout<<")"; // print a closing parenthesis
         }
-        else
+        else // if the left child has lower or equal precedence than t
         {
-            printInfixExpression(t->left);
+            printInfixExpression(t->left); // recursively print the left subtree in infix form without parentheses
         }
     }
-
-    cout << t->element.getValue() << " ";
-
-
-    if(t->right !=nullptr)
+    cout << t->element.getValue() << " "; // print the value of t
+    if(t->right !=nullptr) // if t has a right child
     {
-        if(presedance(t,t->right) || presedance2(t,t->right))
+        if(priority(t,t->right) || priority2(t,t->right)) // if the right child has higher precedence than t, or equal precedence with right associativity
         {
-            cout<<"(";
-            printInfixExpression(t->right);
-            cout<<")";
+            cout<<"("; // print an opening parenthesis
+            printInfixExpression(t->right); // recursively print the right subtree in infix form
+            cout<<")"; // print a closing parenthesis
         }
-        else
+        else // if the right child has lower precedence than t, or equal precedence with left associativity
         {
-            printInfixExpression(t->right);
+            printInfixExpression(t->right); // recursively print the right subtree in infix form without parentheses
         }
     }
 }
-
 
 /*
  * delete all nodes in the subtree pointed to by t
@@ -290,23 +284,27 @@ void BET<T>::printInfixExpression(BinaryNode *t){
 template<typename T>
 void BET<T>::makeEmpty(BinaryNode* &t) {
     if (t != nullptr) {
+    // Recursively delete the left and right children of t
         makeEmpty(t->left);
         makeEmpty(t->right);
+    // Delete the current node t
         delete t;
     }
+    // Set the value of the given node t to nullptr
     t = nullptr;
 }
-//ISSUES WITH MAKE EMPTY FUNCTION
 
 /*
  * clone all nodes in the subtree pointed to by t. Can be called by functions such as the assignment operator=.
  */
 template<typename T>
 typename BET<T>::BinaryNode * BET<T>::clone(BinaryNode *t) {
+    // If t is nullptr, the function returns nullptr.
     if (t == nullptr) {
         return nullptr;
     }
     return new BinaryNode(t->element, clone(t->left), clone(t->right));
+    // The function is recursive, as it calls itself to clone the left and right children of t.
 }
 
 /*
@@ -315,24 +313,24 @@ typename BET<T>::BinaryNode * BET<T>::clone(BinaryNode *t) {
 template<typename T>
 void BET<T>::printPostfixExpression(BinaryNode *n)
 {
+    // If the current node is not null, recursively call printPostfixExpression on the left and right children, then print the value of the node
     if (n != nullptr) {
-        printPostfixExpression(n->left);
-        printPostfixExpression(n->right);
-        cout << n->element.getValue() << " ";
+        printPostfixExpression(n->left);  // recursively call printPostfixExpression on the left child
+        printPostfixExpression(n->right); // recursively call printPostfixExpression on the right child
+        cout << n->element.getValue() << " "; // print the value of the current node followed by a space
     }
 }
 
-/*
- *
- */
 /*
  * return the number of nodes in the subtree pointed to by t.
  */
 template<typename T>
 size_t BET<T>::size(BinaryNode *node){
+    // If the node is null, it has no children and the size is 0
     if (node == nullptr) {
         return 0;
     }
+    // If the node is not null, its size is the size of its left subtree + size of its right subtree + 1 (for itself)
     return 1 + size(node->left) + size(node->right);
 }
 
@@ -341,27 +339,33 @@ size_t BET<T>::size(BinaryNode *node){
  */
 template <typename T>
 int BET<T>::leaves(BinaryNode *t) {
+    // If the current node is null, it doesn't have any leaves so return 0
     if (t == nullptr) {
         return 0;
     }
+    // If the current node is a leaf, it only has one leaf so return 1
     if (t->left == nullptr && t->right == nullptr) {
         return 1;
     }
+    // If the current node is not a leaf, then recursively find the number of leaves
+    // in the left and right subtrees and return their sum
     return leaves(t->left) + leaves(t->right);
 }
 
 /*
  *  return the depth of the subtree pointed to by t.
+ *  This function calculates the depth of the given BinaryNode 't' recursively
+ *  If the BinaryNode is empty, then the depth is -1
+ *  If the BinaryNode has no children, then the depth is 0
+ *  Otherwise, the depth is 1 + the maximum depth of its left and right subtrees
  */
 template <typename T>
 int BET<T>::depth(BinaryNode* &t){
     if (t == nullptr) {
         return -1;
     }
-
     int leftDepth = depth(t->left);
     int rightDepth = depth(t->right);
-
     return 1 + std::max(leftDepth, rightDepth);
 }
 
@@ -375,12 +379,9 @@ int BET<T>::breadth(BinaryNode* &t) {
     if (t == nullptr) {
         return 0;
     }
-
     queue<BinaryNode*> q;
     q.push(t);
-
     int breadth = 0;
-
     while (!q.empty()) {
         breadth = max(breadth, (int)q.size());
 
@@ -397,36 +398,51 @@ int BET<T>::breadth(BinaryNode* &t) {
             }
         }
     }
-
     return breadth;
 }
 
-
+/*
+ * This function returns true if the operator in t1
+ * has higher precedence than the operator in t2, and false otherwise.
+ *
+ * The function checks whether the operator in t1 is either multiplication (*)
+ * or division (/) and the operator in t2 is either addition (+) or subtraction (-).
+ * If both conditions are true, it means that the operator in t1 has
+ * higher precedence than the operator in t2, and the function returns true.
+ * Otherwise, it returns false.
+ */
 template <typename T>
-bool BET<T>::presedance(BinaryNode *t1, BinaryNode *t2)                                                             //Literaral just checking nodes are combo of any two operators
+bool BET<T>::priority(BinaryNode *t1, BinaryNode *t2)
 {
-    if((t1->element.getValue() == "*" || t1->element.getValue() == "/") && (t2->element.getValue() == "+" || t2->element.getValue() == "-"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return (t1->element.getValue() == "*" || t1->element.getValue() == "/") && (t2->element.getValue() == "+" || t2->element.getValue() == "-");
+
 }
 
-template <typename T>                                                                                               // Checking if they are certain combo of + and -
-bool BET<T>::presedance2(BinaryNode *t1, BinaryNode *t2)
+/*
+ * This code checks whether the two nodes have the same value first,
+ * and then uses a switch statement to check the cases where t1 is either
+ * '+' or '-', and t2 is the opposite operator. If either of these cases
+ * is true, the function returns true. Otherwise, it returns false.
+ */
+template <typename T>
+bool BET<T>::priority2(BinaryNode *t1, BinaryNode *t2)
 {
-    if(t1->element.getValue() == t2->element.getValue())
+    if (t1->element.getValue() == t2->element.getValue()) {
         return true;
-    if(t1->element.getValue()=="+" && t2->element.getValue()=="-" )
-        return true;
-    if(t1->element.getValue()=="-" && t2->element.getValue()=="+" )
-        return true;
-
+    }
+    switch (t1->element.getValue()[0]) {
+        case '+':
+            if (t2->element.getValue()[0] == '-') {
+                return true;
+            }
+            break;
+        case '-':
+            if (t2->element.getValue()[0] == '+') {
+                return true;
+            }
+            break;
+    }
     return false;
-
 }
 
 

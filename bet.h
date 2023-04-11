@@ -32,6 +32,8 @@ public:
     int depth( ); //return the depth of the tree.
     int breadth( ); //return the breadth of the tree.
     bool empty(); //return true if the tree is empty. Return false otherwise
+
+    //added this one to help clear up memory
     void makeEmpty();
 
 private:
@@ -58,8 +60,9 @@ private:
     int breadth(BinaryNode* &t); //return the breadth of the subtree pointed to by t. Hint: this one requires a helper function for a recursive implementation. But you do not have to have a recursive implementation.
     BinaryNode* root;    // Private root node is used to determine the top of the tree. A tree is empty if root ==NULL.
 
-    bool presedance(BinaryNode *t1, BinaryNode *t2);                    //Checking presedance
-    bool presedance2(BinaryNode *t1, BinaryNode *t2);
+    //added these two for checking priority of  operators
+    bool priority(BinaryNode *t1, BinaryNode *t2);
+    bool priority2(BinaryNode *t1, BinaryNode *t2);
 
 };
 
